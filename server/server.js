@@ -13,19 +13,24 @@ app.use(bodyParser.json());
 
 // Database connection
 const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'password',
-  database: 'test_db',
+  host: process.env.DB_HOST || 'database',
+  user: process.env.DB_USER || 'linux',
+  password: process.env.DB_PASSWORD || 'redhat',
+  database: process.env.DB_NAME || 'test_db',
 });
 
-db.connect((err) => {
+const connectDB = () => {
+ db.connect((err) => {
   if (err) {
-    console.error('Database connection failed:', err);
-    process.exit(1);
+    console.error('DB not ready, retrying in 5s...');
+    setTimeout(connectDB, 5000);
+    return;
   }
   console.log('Database connected.');
 });
+};
+
+connectDB();
 
 // API Routes
 app.get('/api/users', (req, res) => {
@@ -68,7 +73,7 @@ app.delete('/api/users/:id', (req, res) => {
   });
 });
 
-// Serve static files from the client/public directory
+// Serve static files from React build folder
 app.use(express.static(path.join(__dirname, '../client/public')));
 
 // Serve index.html for all other routes
@@ -80,4 +85,3 @@ app.get('*', (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
-
