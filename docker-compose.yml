@@ -6,8 +6,9 @@ services:
       - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: redhat
+      MYSQL_USER: linux
+      MYSQL_PASSWORD: redhat
       MYSQL_DATABASE: test_db
-      MYSQL_ROOT_HOST: "%"
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -predhat"]
       interval: 10s
@@ -16,14 +17,16 @@ services:
 
   backend:
     container_name: backend
-    image: backend:1.0
+    build:
+      context: ./server
+      dockerfile: Dockerfile
     restart: unless-stopped
     depends_on:
       database:
         condition: service_healthy
     environment:
       DB_HOST: database
-      DB_USER: root
+      DB_USER: linux
       DB_PASSWORD: redhat
       DB_NAME: test_db
     ports:
@@ -31,7 +34,9 @@ services:
 
   frontend:
     container_name: frontend
-    image: frontend:1.0
+    build:
+      context: ./client
+      dockerfile: Dockerfile
     ports:
       - "8080:80"
     depends_on:
