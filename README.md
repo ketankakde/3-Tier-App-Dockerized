@@ -3,6 +3,12 @@
 
 This is a full-stack application for managing users with a front-end built using HTML, CSS, and JavaScript, and a back-end powered by Node.js, Express, and MySQL.
 
+## My Contribution
+- Containerized the application using Docker
+- Wrote Dockerfile for frontend
+- Wrote Dockerfile for backend
+- Created docker-compose.yml for multi-container setup
+
 ## Table of Contents
 
 - [Features](#features)
