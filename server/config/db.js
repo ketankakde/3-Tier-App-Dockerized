@@ -1,19 +1,24 @@
 const mysql = require('mysql');
 
-const db = mysql.createConnection({
-  host: 'database',
-  user: 'linux',
-  password: 'redhat', // Replace with your actual MySQL password
-  database: 'test_db'
-});
+function connectWithRetry() {
+  const db = mysql.createConnection({
+    host: 'database',
+    user: 'linux',
+    password: 'redhat',
+    database: 'test_db'
+  });
 
-db.connect(err => {
-  if (err) {
-    console.error('Database connection failed:', err.stack);
-    return;
-  }
-  console.log('Connected to the database.');
-});
+  db.connect(err => {
+    if (err) {
+      console.error('Database connection error:', err);
+      console.log('Retrying in 5s...');
+      setTimeout(connectWithRetry, 5000);
+    } else {
+      console.log('Connected to MySQL');
+    }
+  });
 
-module.exports = db;
+  return db;
+}
 
+module.exports = connectWithRetry();
